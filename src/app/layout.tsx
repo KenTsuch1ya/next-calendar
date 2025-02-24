@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Lato } from "next/font/google";
+import { Lato } from "next/font/google";
 
-import Header from "@/components/Header";
-import "./globals.css";
+import Header from "@/components/layout/Header";
+import "@/styles/globals.css";
 
 const lato = Lato({
   weight: ["400", "700"],

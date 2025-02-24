@@ -1,39 +1,43 @@
-import { auth } from "@/auth";
-import { google, calendar_v3 } from "googleapis";
-import { User } from "@auth/core/types";
-import Calendar = calendar_v3.Calendar;
-
-type Koma = User & {
-  accessToken: string;
-};
+import { auth, signIn, signOut } from "@/auth";
+import NextCalendar from "@/components/ui/Calendar";
+import Link from "next/link";
+import { useCalendar } from "@/hooks/useCalendar";
+import { UserWithToken } from "@/types/auth";
 
 export default async function me() {
+  const { getCalendarList } = useCalendar();
+
   const session = await auth();
   if (!session) return;
-  const user = session.user as Koma;
-  console.log(session);
-  console.log(user.accessToken);
 
-  // // Google OAuthへの接続
-  const oauth2Client = new google.auth.OAuth2({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  });
-  const accessToken = user?.accessToken; // Googleが払い出したアクセストークン
-  oauth2Client.setCredentials({ access_token: accessToken });
+  const user = session.user as UserWithToken;
 
-  // // カレンダーを取得
-  const calendar: Calendar = google.calendar({
-    version: "v3",
-    auth: oauth2Client,
-  });
+  try {
+    const calendarList = await getCalendarList(user);
 
-  const calendarResponse = await calendar.calendarList.list();
-  console.log(calendarResponse);
-
-  return (
-    <div>
-      <h1>My</h1>
-    </div>
-  );
+    return (
+      <div>
+        <h1>Calendar</h1>
+        <NextCalendar />
+      </div>
+    );
+  } catch (error) {
+    return (
+      <div>
+        <div>
+          ログインの有効期限が切れました。
+          <br />
+          もう一度ログインしてください。
+        </div>
+        <form
+          action={async () => {
+            "use server";
+            await signIn("google", { redirectTo: "/me" });
+          }}
+        >
+          <button type="submit">Signin with Google</button>
+        </form>
+      </div>
+    );
+  }
 }

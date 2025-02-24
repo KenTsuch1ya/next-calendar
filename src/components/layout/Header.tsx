@@ -1,5 +1,5 @@
 import { auth, signIn, signOut } from "@/auth";
-import styles from "./header.module.css";
+import styles from "@/styles/components/header.module.css";
 
 export default async function Header() {
   const session = await auth();
