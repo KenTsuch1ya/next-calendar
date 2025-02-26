@@ -24,7 +24,6 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${lato.className}`}>
         <Suspense fallback={<div>Loading...</div>}>
-          {/* @ts-expect-error Server Component */}
           <Header />
         </Suspense>
         {children}

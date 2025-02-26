@@ -1,6 +1,5 @@
 "use client";
-
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import {
   addDays,
   endOfMonth,
@@ -11,10 +10,16 @@ import {
 } from "date-fns";
 
 import styles from "@/styles/components/calendar.module.css";
+import { calendar_v3 } from "googleapis";
 
-export default function NextCalendar() {
+type Props = {
+  list: calendar_v3.Schema$CalendarList;
+};
+
+export default function Calendar({ list }: Props) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
+  const [] = useState();
 
   const start = startOfWeek(startOfMonth(currentDate));
   const end = endOfWeek(endOfMonth(currentDate));
@@ -26,12 +31,14 @@ export default function NextCalendar() {
     day = addDays(day, 1);
   }
 
-  const onClickDate = (
+  const onClickDate = async (
     e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
     day: Date
   ) => {
     console.log(e);
     console.log(format(day, "d"));
+
+    // console.log(getCalendarList());
   };
 
   return (
